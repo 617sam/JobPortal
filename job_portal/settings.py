@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from shutil import which
+from django.contrib.auth import get_user_model
+
+
 
 
 
@@ -52,6 +55,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'django_browser_reload',
+    'main',
 
 ]
 
@@ -68,7 +72,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'job_portal.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -98,6 +101,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
@@ -149,3 +153,6 @@ if not os.path.exists(BASE_DIR / 'static'):
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# job_portal/settings.py
+AUTH_USER_MODEL = 'main.CustomUser'
+LOGIN_REDIRECT_URL='home'

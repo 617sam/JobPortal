@@ -7,7 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.2.7/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .hero-bg {
-            background-image: url('https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg'); /* Replace with your image URL */
+            background-image: url('https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg'); 
+            /* Replace with your image URL */
         }
     </style>
 </head>
@@ -180,41 +181,22 @@
 
 <!-- Jobs Section -->
 <section class="bg-gray-50 py-12">
-    <div class="container mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center mb-8">Featured Jobs</h2>
-        <div class="flex flex-wrap -mx-4">
-            <!-- Job 1 -->
-            <div class="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold mb-2">Software Engineer</h3>
-                    <p class="text-gray-600 mb-4">Company XYZ</p>
-                    <a href="/jobs/software-engineer/" class="text-blue-500 hover:underline">View Details</a>
+    <div class="container mx-auto mt-10">
+        <h2 class="text-3xl font-bold text-center mb-8">Job Listings</h2>
+        <div id="job-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for job in jobs %}
+                <div class="job-card bg-white shadow-sm rounded-lg p-6 hover:shadow-lg transition-shadow duration-200">
+                    <h3 class="text-xl font-semibold text-indigo-600">{{ job.name }}</h3>
+                    <p class="text-gray-500 mt-1">{{ job.location }}</p>
+                    <p class="mt-4 text-gray-700">{{ job.details }}</p>
+                    <p class="mt-2 text-gray-500">Salary: {{ job.salary }}</p>
+                    <p class="mt-2 text-gray-500">Level: {{ job.level }}</p>
+                    <p class="mt-2 text-gray-500">Openings: {{ job.openings }}</p>
+                    {% comment %} <a href="{% url 'job-detail' job.id %}" class="mt-4 inline-block px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Apply Now</a> {% endcomment %}
                 </div>
-            </div>
-            <!-- Job 2 -->
-            <div class="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold mb-2">Product Manager</h3>
-                    <p class="text-gray-600 mb-4">Company ABC</p>
-                    <a href="/jobs/product-manager/" class="text-blue-500 hover:underline">View Details</a>
-                </div>
-            </div>
-            <!-- Job 3 -->
-            <div class="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold mb-2">UX Designer</h3>
-                    <p class="text-gray-600 mb-4">Company 123</p>
-                    <a href="/jobs/ux-designer/" class="text-blue-500 hover:underline">View Details</a>
-                </div>
-            </div>
-            <!-- Job 4 -->
-            <div class="w-full md:w-1/2 lg:w-1/4 px-4 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold mb-2">Marketing Specialist</h3>
-                    <p class="text-gray-600 mb-4">Company DEF</p>
-                    <a href="/jobs/marketing-specialist/" class="text-blue-500 hover:underline">View Details</a>
-                </div>
-            </div>
+            {% empty %}
+                <p class="text-center text-gray-700">No jobs available.</p>
+            {% endfor %}
         </div>
     </div>
 </section>
