@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login,logout, get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.views.generic import DetailView
 from .models import Job
 
 # Import the User model
@@ -36,6 +38,26 @@ def register_view(request):
         else:
             messages.error(request, 'Passwords do not match')
     return render(request, 'main/register.html')
+
+# for quick serach
+# views.py
+ # Assuming your model is named Job
+
+def job_list(request):
+    # Fetch all jobs or apply filters based on a search query
+    query = request.GET.get('q')
+    if query:
+        jobs = Job.objects.filter(name__icontains=query)
+    else:
+        jobs = Job.objects.all()
+
+    # Pass the job data to the template
+    context = {
+        'jobs': jobs,
+    }
+    return render(request, 'main/job_list.html', context)
+
+
     # if request.method == 'POST':
     #     username = request.POST.['username']
     #     email = request.POST.['email']
