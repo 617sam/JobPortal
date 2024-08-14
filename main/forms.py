@@ -4,18 +4,24 @@ from .models import CustomUser
 from django import forms
 from .models import Job
 
+# forms.py
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
-
     class Meta:
         model = CustomUser
-        fields = ("username", "email","password1", "password2")
+        fields = ("username", "email", "role", "password1", "password2")
+        widgets = {
+            'role': forms.HiddenInput()  # Optionally hide the role field during registration
+        }
 
 class CustomUserChangeForm(UserChangeForm):
-
     class Meta:
         model = CustomUser
-        fields = ("username", "email")
+        fields = ("username", "email", "role")
+
         
         
 class LoginForm(forms.Form):
