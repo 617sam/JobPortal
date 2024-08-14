@@ -13,6 +13,7 @@
     </style>
 </head>
 <body>
+    
     <body class="bg-gray-100">
         <!-- Header with Background Image -->
         <header class="hero-bg bg-cover bg-center bg-no-repeat text-green-700 py-20">
@@ -23,34 +24,16 @@
             </div>
         </header>
 <div>
-  <!-- <h1 class="text-5xl">Hello world</h1>
-  <header class="hero-bg text-green-700 py-20"> -->
-    <!-- <div className='bg-black h-50 w-full  bg-center relative'>
-    <img src ='https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' className= 'w-full h-full object-cover absolute'/>
-        <div className='p-24'>
-             <h1 className="text-black md:text-5xl font-bold mb-4">Find Your Dream Job</h1>
-             <p class="text-lg mb-6">Explore thousands of job listings and connect with top employers.</p>
-              <a href="/signup/" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold">Get Started</a>
-        </div> -->
-        <!-- <h1 class="text-4xl md:text-5xl font-bold mb-4">Find Your Dream Job</h1>
-        <p class="text-lg mb-6">Explore thousands of job listings and connect with top employers.</p>
-        <a href="/signup/" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold">Get Started</a>
-    </div> -->
-<!-- </header> -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Search Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        .job-card:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
+
+
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <!-- Job Search Section -->
     <div class="container mx-auto mt-10">
         <div class="bg-white shadow-md rounded-lg p-6">
@@ -81,9 +64,6 @@
         </div>
     </div>
 
-    
-
-    
 <!-- Jobs Section -->
 <section class="bg-gray-50 py-5">
     <div class="container mx-auto mt-10">
@@ -98,6 +78,8 @@
                     <p class="mt-2 text-gray-500">Level: {{ job.level }}</p>
                     <p class="mt-2 text-gray-500">Openings: {{ job.openings }}</p>
                     <a href="{% url 'job-detail' job.id %}" class="mt-4 inline-block px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Apply Now</a>
+                    <a href="{% url 'job_update' job.id %}" class="mt-4 inline-block px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Update</a>
+
                 </div>
             {% empty %}
                 <p class="text-center text-gray-700">No jobs available.</p>
@@ -150,62 +132,3 @@
 </section>
 </div>
 {% endblock content %}
-<!-- <script>
-        const jobs = [
-            { title: "Software Engineer", location: "New York", company: "Tech Corp", description: "Develop and maintain web applications." },
-            { title: "Product Manager", location: "San Francisco", company: "Innovate Inc", description: "Lead product teams and manage product life cycle." },
-            { title: "Data Scientist", location: "Boston", company: "Data Solutions", description: "Analyze and interpret complex data sets." },
-            { title: "Graphic Designer", location: "Los Angeles", company: "Creative Studios", description: "Design graphics for digital and print media." },
-            { title: "HR Specialist", location: "Chicago", company: "Corporate HR", description: "Handle recruitment and employee relations." },
-            { title: "Marketing Manager", location: "Seattle", company: "Sales & Marketing Ltd", description: "Plan and execute marketing campaigns." },
-            { title: "Sales Executive", location: "Austin", company: "Global Sales", description: "Develop sales strategies and close deals." },
-            { title: "IT Support", location: "Houston", company: "IT Services", description: "Provide technical support to end-users." },
-            { title: "Business Analyst", location: "Washington DC", company: "Consulting Partners", description: "Analyze business processes and recommend improvements." },
-            { title: "UX/UI Designer", location: "San Diego", company: "Design Hub", description: "Create user-friendly interfaces for web and mobile apps." },
-            { title: "Product Manager", location: "India", company: "TechAxis", description: "Lead product teams and manage product life cycle." },
-
-        ];
-
-        function searchJobs() {
-            const jobTitle = document.getElementById("jobTitle").value.toLowerCase();
-            const location = document.getElementById("location").value.toLowerCase();
-            const company = document.getElementById("company").value.toLowerCase();
-
-            const filteredJobs = jobs.filter(job => {
-                return (
-                    (job.title.toLowerCase().includes(jobTitle) || jobTitle === "") &&
-                    (job.location.toLowerCase().includes(location) || location === "") &&
-                    (job.company.toLowerCase().includes(company) || company === "")
-                );
-            });
-
-            displayJobs(filteredJobs);
-        }
-
-        function displayJobs(jobs) {
-            const jobResults = document.getElementById("job-results");
-            jobResults.innerHTML = "";
-
-            if (jobs.length === 0) {
-                jobResults.innerHTML = `<p class="text-center text-gray-700">No jobs found. Try adjusting your search criteria.</p>`;
-                return;
-            }
-
-            jobs.forEach(job => {
-                const jobCard = document.createElement("div");
-                jobCard.className = "job-card bg-white shadow-sm rounded-lg p-6 hover:shadow-lg transition-shadow duration-200";
-
-                jobCard.innerHTML = `
-                    <h3 class="text-xl font-semibold text-indigo-600">${job.title}</h3>
-                    <p class="text-gray-500 mt-1">${job.company} - ${job.location}</p>
-                    <p class="mt-4 text-gray-700">${job.description}</p>
-                    <button class="mt-4 px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Apply Now</button>
-                `;
-
-                jobResults.appendChild(jobCard);
-            });
-        }
-
-        // Display all jobs initially
-        displayJobs(jobs);
-    </script> -->

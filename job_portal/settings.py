@@ -17,6 +17,11 @@ from django.contrib.auth import get_user_model
 
 
 
+AUTHENTICATION_BACKENDS = [
+    'main.backends.EmailBackend',  # Custom backend for email authentication
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+    # Add other backends if needed
+]
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

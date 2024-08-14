@@ -1,15 +1,21 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login,logout, get_user_model
 from django.contrib import messages
+from django.contrib.auth import authenticate,login
+from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import DetailView
 from .models import Job
-
+from .forms import CustomUserCreationForm, LoginForm
+from .forms import JobForm
+from django.shortcuts import render, get_object_or_404, redirect
 # Import the User model
 User = get_user_model()
 # Create your views here.
-def home(request):
+def home_view(request):
     jobs = Job.objects.all()
     return render(request,"main/home.html",{'jobs':jobs})
 
@@ -17,31 +23,48 @@ def about(request):
     return render(request,"main/about.html",{})
 
 def register_view(request):
-    #  User = get_user_model()
-    
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-        
-        if password1 == password2:
-            if User.objects.filter(username=username).exists():
-                messages.error(request, 'Username already exists')
-            elif User.objects.filter(email=email).exists():
-                messages.error(request, 'Email already exists')
-            else:
-                user = User.objects.create_user(username=username, email=email, password=password1)
-                user.save()
-                login(request, user)
-                return redirect('home')
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()  # Save the user to the database
+            messages.success(request, "Registration successful! Please log in.")
+            return redirect('login')  # Redirect to the login page
         else:
-            messages.error(request, 'Passwords do not match')
-    return render(request, 'main/register.html')
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            messages.error(request, "Registration failed. Please correct the errors.")
+    else:
+        form = CustomUserCreationForm()
 
-# for quick serach
-# views.py
- # Assuming your model is named Job
+    return render(request, 'main/register.html', {'form': form})
+
+# for login
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            print(email)
+            print(password)
+            user = authenticate(request, email=email, password=password)
+            print(user)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Login successful!')
+                return redirect('home')  # Redirect to your homepage URL name
+            else:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"Error in {field}: {error}")
+                        messages.error(request, "Registration failed. Please correct the errors.")
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = LoginForm()
+
+    return render(request, 'main/login.html', {'form': form})
 
 def job_list(request):
     # Fetch all jobs or apply filters based on a search query
@@ -57,68 +80,42 @@ def job_list(request):
     }
     return render(request, 'main/job_list.html', context)
 
+# for creating jobs
+def job_create_view(request):
+    if request.method == 'POST':
+        form = JobForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Job created successfully!')
+            return redirect('/')  # Redirect to a list or detail view after saving
+    else:
+        form = JobForm()
+    
+    return render(request, 'main/job_form.html', {'form': form})
 
-    # if request.method == 'POST':
-    #     username = request.POST.['username']
-    #     email = request.POST.['email']
-    #     password1 = request.POST['password1']
-    #     password2 = request.POST['password2']
+# for updating jobs
+def job_update_view(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    
+    if request.method == 'POST':
+        form = JobForm(request.POST, instance=job)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Job updated successfully!')
+            return redirect('/')  # Redirect to a list or detail view after saving
+    else:
+        form = JobForm(instance=job)
+    
+    return render(request, 'main/job_update.html', {'form': form, 'job': job})
 
-    #     if password1 != password2:
-    #         messages.error(request, "Passwords do not match.")
-    #     elif User.objects.filter(username=username).exists():
-    #         messages.error(request, "Username already exists.")
-    #     elif User.objects.filter(email=email).exists():
-    #         messages.error(request, "Email is already in use.")
-    #     else:
-    #         user = User.objects.create_user(username=username, email=email, password=password1)
-    #         user.save()
-    #         messages.success(request, "Registration successful. Please log in.")
-    #         return redirect('home')
-       
-        
-
-    # return render(request, 'main/register.html')
-
-# def login_view(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-        
-#         # Django's authenticate method uses username, so retrieve the user by email
-#         user = User.objects.filter(email=email).first()
-#         if user:
-#             user = authenticate(request, username=user.username, password=password)
-        
-#         if user is not None:
-#             login(request, user)
-#             messages.success(request, "Login successful!")
-#             return redirect('home')  # Redirect to your home view
-#         else:
-#             messages.error(request, "Invalid email or password.")
-
-#     return render(request, 'main/login.html')
-
-# #@login_required
-# def logout_view(request):
-#     logout(request)
-#     messages.info(request, "Logged out successfully.")
-#     return redirect('login')
-
-# def login_view(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-        
-#         # Authenticate user
-#         user = authenticate(request, username=email, password=password)
-        
-#         if user is not None:
-#             # Login user
-#             login(request, user)
-#             return redirect('home')  # Redirect to a home page or dashboard
-#         else:
-#             messages.error(request, 'Invalid email or password')
-
-#     return render(request, 'login.html')  # Make sure the template name matches your file
+# for delete
+def job_confirm_delete_view(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    
+    if request.method == 'POST':
+        job.delete()
+        messages.success(request, 'Job deleted successfully!')
+        return redirect('/')  # Redirect to a list or detail view after deleting
+    
+    return render(request, 'main/job_confirm_delete.html', {'job': job})
 
